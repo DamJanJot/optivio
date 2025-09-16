@@ -1,0 +1,43 @@
+    body { 
+        background: #1e1e2f;
+ height: 100vh;
+        color: white; 
+        font-family: Montserrat, sans-serif; 
+        padding: 20px; 
+        }
+
+
+ 
+
+
+        
+    .user { 
+        display: flex; align-items: center; 
+        background: rgba(255,255,255,0.05); 
+        padding: 10px 15px; 
+        margin-bottom: 10px; 
+        border-radius: 16px; 
+        border: 1px solid rgba(255,255,255,0.1); 
+        text-decoration: none; 
+        color: white; 
+        }
+        
+    .user:hover { 
+        background: rgba(255,255,255,0.08); 
+        }
+        
+    .user img { 
+        width: 48px; 
+        height: 48px; 
+        border-radius: 50%; 
+        object-fit: cover; 
+        margin-right: 12px; 
+        }
+        
+    .user .unread { 
+        background: red; 
+        padding: 2px 6px; 
+        font-size: 0.75rem; 
+        border-radius: 999px; 
+        margin-left: auto; 
+        }

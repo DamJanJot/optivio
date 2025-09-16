@@ -1,0 +1,192 @@
+body {
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      font-family: 'Montserrat', sans-serif;
+      color: white;
+      padding: 4rem 1rem;
+    }
+    
+    .project-info {
+        text-align: center;
+
+    }
+
+
+    .hero {
+      text-align: center;
+      padding: 4rem 1rem 2rem;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+    }
+    .hero p {
+      color: #aaa;
+      font-size: 1.1rem;
+    }
+    .hero a {
+      margin-top: 1rem;
+    }    
+    
+.card {max-width: 540px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        --webkit-backdrop-filter: blur(20px);
+        --backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+
+
+
+
+
+
+
+    .srodkowy {
+padding: 44px;
+}
+
+    .srodkowy,
+    .project-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      
+    }
+    .box-phone {
+      width: 340px;
+      height: 620px;
+      background: #11131f;
+      border-radius: 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      padding: 1rem;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .glass {
+      width: 100%;
+      height: 100%;
+      border-radius: 32px;
+      --backdrop-filter: blur(10px);
+      --webkit-backdrop-filter: blur(10px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .glass iframe {
+      flex-grow: 1;
+      border: none;
+      border-radius: 16px;
+      width: 100%;
+      height: 100%;
+    }
+    .box-tel {
+      width: 40px;
+      height: 12px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 0 0 35px 35px;
+      align-self: center;
+      margin-bottom: 10px;
+    }
+    .project-details {
+      max-width: 420px;
+    }
+    .project-details h2 {
+      font-weight: 600;
+    }
+    .project-details ul {
+      padding-left: 1.2rem;
+    }
+    .btn-outline-light {
+      border-radius: 20px;
+      margin-right: 0.5rem;
+    }
+
+
+iframe {
+  width: 100%;
+  height: calc(100vh - 55px); /* odejmij wysokość dolnej nawigacji */
+  border: none;
+  overflow: hidden;
+  display: block;
+}
+
+
+
+.glass-terminal {
+  width: 100%;
+  height: 100vh;
+  border: none;
+  overflow: hidden;
+  display: block;
+}
+
+
+
+.projekty {
+    border: 4px solid rgba(255, 255, 255, 0.18);
+}
+
+
+
+
+    .nav-bottom button:focus,
+    .nav-bottom button:hover {
+        background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+        
+    }
+
+
+    .nav-bottom button.active {
+      background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+      
+    }
+
+
+
+  .nav-link button {
+    --backdrop-filter: blur(10px);
+    --webkit-backdrop-filter: blur(10px);
+    
+    
+  }
+  
+
+.nav-link.active {
+	color: #fff;
+	border-radius: 26px 26px 0px 0px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        --webkit-backdrop-filter: blur(20px);
+        --backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+  
+.nav-link.active button  {
+
+        border: 1px solid rgba(255, 255, 255, 0.18);
+}
+  
+
+.nav-link button:focus,
+.nav-link button:hover {
+        background: rgba(255,255,255,0.08); 
+        cursor: cell;
+        transform: scale(1.1);
+        transition: 200ms; 
+}
+
+
+
+
+
+
+.card-body {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        --webkit-backdrop-filter: blur(20px);
+        --backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        z-index: 5;
+}

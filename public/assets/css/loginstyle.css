@@ -1,0 +1,82 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.headzdj {
+    position: relative;
+    background-image: url(".../img/16281857_rm125batch2-ning-11b-frames.jpg");
+    background-position: bottom;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.headzdj .headzdj-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.767);
+    z-index: -1;
+}
+
+.phone {
+    width: 330px;
+ /*   max-width: 598px;   */
+    height: 566px;
+   padding: 30px 20px; 
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 26px;
+    z-index: 5;
+}
+
+.box-sdw {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    border-radius: 22px;
+}
+
+h1, h4 {
+    text-shadow: 0 0 20px #5f80bc, 0 0 40px #acece2;
+    text-align: center;
+}
+
+.glass-info {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.37);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 32px;
+    padding: 6px;
+    z-index: 5;
+}
+
+.button {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    box-shadow: 0 0 2px #5c90ff, 0 0 3px #5c7aff, 0 0 5px #136cb5;
+    color: #5cfaff;
+}
+
+
+.form-control {
+   width: 100%;
+}
+
+
+	

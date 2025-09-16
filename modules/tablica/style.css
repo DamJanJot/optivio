@@ -1,0 +1,83 @@
+body { 
+    background: #1e1e2f; 
+    color: white; 
+    font-family: Arial; 
+    margin: 20px; 
+    }
+    
+h1 { 
+    color: #66ccff; 
+    text-align: center; 
+    }
+    
+.post { 
+    background: #222; 
+    padding: 10px; 
+    border-radius: 10px; 
+    margin-bottom: 20px; 
+    
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        -webkit-backdrop-filter: blur(20px);
+        -backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius:20px;
+        z-index: 5;
+    }
+    
+.post img { 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    vertical-align: middle; 
+    }
+    
+.post-header { 
+    margin-bottom: 5px; 
+    }
+    
+form textarea { 
+    width: 100%; 
+    padding: 10px; 
+    border-radius: 10px; 
+    background: #333; 
+    color: white; 
+    border: none; 
+    }
+    
+form button { 
+    padding: 10px; 
+    color: white;  
+    cursor: pointer; 
+    width: 100%; 
+    margin-top: 5px; 
+    background-color: rgba(255,255,255,0.05);
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 16px;
+    }
+    
+form button:hover { 
+background-color: rgba(255,255,255,0.08) 
+border: 2px solid #0dcaf0;
+transition: 200ms; 
+transition: background-color 0.2s;
+color: purple;
+    }
+    
+.comment { 
+    background: #333; 
+    padding: 5px; 
+    border-radius: 5px; 
+    margin-top: 5px; 
+    }
+    
+a.delete { 
+    color: red; 
+    float:right; 
+    text-decoration: none; 
+    font-size: 12px; 
+    }
+    
+
+
+

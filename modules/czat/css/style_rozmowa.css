@@ -1,0 +1,69 @@
+    body { 
+        background-color: rgb(15, 23, 42);
+        color: white; 
+        font-family: Montserrat, sans-serif; 
+        padding-bottom: 100px; 
+        }
+        
+    .msg { 
+        display: flex; align-items: flex-start; 
+        margin-bottom: 12px; 
+        }
+        
+    .msg.self { 
+        flex-direction: row-reverse; 
+        }
+        
+    .msg-avatar { 
+        width: 36px; 
+        height: 36px; 
+        border-radius: 50%; 
+        object-fit: cover; 
+        margin: 0 10px; 
+        }
+        
+    .bubble { 
+        background: rgba(255,255,255,0.08); 
+        padding: 8px 12px; 
+        border-radius: 12px; 
+        max-width: 75%; 
+        word-break: break-word; 
+        }
+        
+    .timestamp { 
+        font-size: 0.7rem; 
+        color: #aaa; 
+        margin-top: 4px; 
+        }
+        
+    form {
+        position: fixed;
+        bottom: 6px;
+        left: 0;
+        right: 0;
+        background: #1c1c2e;
+        padding: 10px 16px; /* więcej przestrzeni po bokach */
+        display: flex;
+        gap: 10px;
+        box-sizing: border-box;
+        }
+
+    input[type=text] { 
+        flex: 1; 
+        border-radius: 8px; 
+        border: none; 
+        padding: 8px; 
+        }
+        
+    button { 
+        background: #0d6efd; 
+        color: white; 
+        border: none; 
+        padding: 8px 14px; 
+        border-radius: 8px; 
+        }
+        
+        
+        
+        
+        

@@ -1,0 +1,23 @@
+# .gitignore
+
+# Pliki konfiguracyjne
+env
+.env
+.env.local
+.env.*.local
+
+# Katalogi systemowe
+.DS_Store
+Thumbs.db
+
+# Katalogi IDE
+.idea/
+.vscode/
+
+# Katalogi kompilacji
+node_modules/
+vendor/
+
+# Katalogi logów
+logs/
+*.log

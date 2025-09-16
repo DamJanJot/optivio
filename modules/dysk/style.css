@@ -1,0 +1,85 @@
+       body {
+            font-family: 'Montserrat', sans-serif;
+            background: #1a1c2c;
+            color: #fff;
+            padding: 1rem;
+        }
+        .section-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 12px;
+        }
+        .btn {
+            margin-top: 0.5rem;
+            
+            border-radius: 12px;
+        }
+        
+        .card,
+        .btn,
+        .card textarea {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+           
+        }
+        
+        .card {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 16px;
+        }
+        
+        
+        .card textarea:focus,
+        .card textarea:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        
+        }
+        
+        .dropdown button {
+              display: flex;
+      
+        }
+        
+        
+        input[type="file"]::file-selector-button {
+            background-color: #343a40;
+            color: #fff;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+
+
+
+
+#folder-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.file-item {
+  background: #2a2c3e;
+  border-radius: 8px;
+  padding: .5rem;
+  text-align: center;
+  position: relative;
+}
+
+.file-item img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Pojawianie opcji na hover */
+.file-item .dropdown { display: none; position: absolute; top: .5rem; right: .5rem; }
+.file-item:hover .dropdown { display: block; }

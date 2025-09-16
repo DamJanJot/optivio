@@ -1,0 +1,88 @@
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #1e1e2f;
+      color: #fff;
+      padding: 1rem;
+    }
+
+    .task {
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+
+    }
+    
+    .task:hover {
+        background-color: rgba(255,255,255,0.08);
+
+    }
+    
+    .form-wrapper {
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .btn-task {
+      margin-bottom: 1rem;
+      background-color: rgba(255,255,255,0.05);
+      border: 2px dashed rgba(255,255,255,0.2);
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+      color: #aaa;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-task:hover {
+        background-color: rgba(255,255,255,0.08);
+
+    }
+    
+    textarea {
+      resize: none;
+       background: transparent;
+      border: none;
+    }
+
+
+  .small-info { 
+    font-size: 0.8rem; 
+    color: #aaa; 
+    margin-top: 0.5rem; 
+    
+   }
+
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-title {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.task-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.task-buttons button {
+  padding: 4px 6px;
+  font-size: 0.8rem;
+  margin-bottom: 0.7rem;
+}
+
+.task-info-box {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
