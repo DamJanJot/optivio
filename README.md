@@ -106,4 +106,3 @@ index.php               # Main entry point to run the app
 * MIT License
 
 # optivio-app
-# optivio-app
