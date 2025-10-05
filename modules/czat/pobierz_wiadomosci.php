@@ -16,6 +16,17 @@ $stmt = $pdo->prepare("
 $stmt->execute(['me' => $me, 'other' => $other]);
 $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+
+function linkify($text) {
+    $text = htmlspecialchars($text);
+    $pattern = '~(https?://[^\s<]+)~i';
+    $replacement = '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>';
+    return preg_replace($pattern, $replacement, $text);
+}
+
+
+
 foreach ($msgs as $msg) {
   $isSelf = $msg['nadawca_id'] == $me;
   // Determine image path
@@ -25,9 +36,11 @@ foreach ($msgs as $msg) {
   } else {
       $img = '/uploads/default.png';
   }
-  echo '<div class="msg ' . ($isSelf ? 'self' : '') . '">';
+
+  
+    echo '<div class="msg ' . ($isSelf ? 'self' : '') . '">';
   echo '<img src="' . htmlspecialchars($img) . '" class="msg-avatar" alt="avatar">';
-  echo '<div><div class="bubble">' . htmlspecialchars($msg['tresc']) . '</div>';
+  echo '<div><div class="bubble">' . linkify($msg['tresc']) . '</div>';
   echo '<div class="timestamp">' . $msg['data_wyslania'] . '</div></div>';
   echo '</div>';
 }

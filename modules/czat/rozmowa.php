@@ -2,6 +2,8 @@
 session_start();
 if (!isset($_SESSION['loggedin'])) {
     header('Location: ../login.php');
+    header('Content-Type: text/html; charset=utf-8');
+
     exit();
 }
 
@@ -35,23 +37,74 @@ $wiadomosci = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="./css/style_rozmowa.css">
 </head>
 <body class="container mt-3">  
-<h5 class="mb-4"><a href="index.php" style="color: #aaa; text-decoration:none;">← Powrót</a></h5>
+    <h5 class="mb-4"><a href="index.php" style="color: #aaa; text-decoration:none;">← Powrót</a></h5>
+
+    <script>
+    
+    function linkify($text) {
+    $text = preg_replace(
+        '~(https?://[^\s]+)~i',
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
+        htmlspecialchars($text)
+    );
+    return $text;
+}
+    
+    </script>
+
+    <div id="chat-box"></div>
+
+    <form method="post" action="wyslij.php">
+        <input type="hidden" name="odbiorca_id" value="<?= $other ?>">
+    <!--    <input type="text" id="tresc" name="tresc" placeholder="Napisz wiadomość..." required>
+    
+         ___________________________________ -->
+    
+        <div class="input-group mb-3">
+            <input type="text" id="tresc" name="tresc" class="form-control" placeholder="Napisz wiadomość..." required>
+            <button type="button" class="btn btn-outline-secondary" id="toggle-emojis">😊</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+
+        <div id="emoji-picker" style="display: none; margin-bottom: 10px;">
+            <?php
+                $emojis = ['😀','😁','😂','🤣','😅','😎','😍','😢','😡','👍','🙏','❤️'];
+                foreach ($emojis as $emoji) {
+                    echo "<span class='emoji' style='cursor:pointer; font-size: 24px; margin-right: 5px;'>$emoji</span>";
+                }
+            ?>
+        </div>
+
+        <!-- ____________________<button></button>______________________ -->
+
+    
+        
+        
+    </form>
 
 
 
 
-  <div id="chat-box"></div>
+    <!-- ______________________________________________ -->
+
+
+<script>
+  // Funkcja kopiowania tekstu z dowolnego elementu z klasą 'copy-box'
+  document.querySelectorAll('.copy-box').forEach(element => {
+    element.addEventListener('click', () => {
+      const textToCopy = element.getAttribute('data-copy');
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        alert(`Tekst skopiowany: ${textToCopy}`);
+      }).catch(err => {
+        console.error('Błąd podczas kopiowania: ', err);
+      });
+    });
+  });
+</script>
 
 
 
-  <form method="post" action="wyslij.php">
-    <input type="hidden" name="odbiorca_id" value="<?= $other ?>">
-    <input type="text" name="tresc" placeholder="Napisz wiadomość..." required>
-    <button><i class="fa-solid fa-paper-plane"></i></button>
-  </form>
-
-
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
   <script src="js/chat.js"></script>
 </body>

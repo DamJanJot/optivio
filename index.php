@@ -1,4 +1,4 @@
 <?php
-header("Location: views/nav.php");
+header("Location: public/index.php");
 exit();
 ?>
