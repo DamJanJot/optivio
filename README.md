@@ -1,4 +1,4 @@
-# Optivio App 🧩
+# Optivio App - README.md
 
 ## Project Description
 
@@ -56,17 +56,17 @@ index.php               # Main entry point to run the app
 
 ## Modules and Features
 
-### 📝 Notebook
+### Notebook
 * Create, edit, and delete notes.
 * Data stored in the `notatki` table.
 
-### ✅ ToDo / Tasks
+### ToDo / Tasks
 * Tasks divided into categories: to-do, in progress, done.
 * Goals within tasks, with checkboxes and a progress bar.
 * Notifications for goals assigned to a user.
 * Tables: `taski`, `cele`, `powiadomienia`.
 
-### 🖼️ Gallery
+### Gallery
 * View and add photos.
 * File upload support.
 * Table: `galeria`.
@@ -74,38 +74,22 @@ index.php               # Main entry point to run the app
 ### Terminal
 * Simulated terminal in the browser.
 
-### 📅 Calendar
+### Calendar
 * Display events.
 * Add, edit, and delete events.
 * Table: `kalendarz`.
 
-### 📌 Board
+### Board
 * Create and edit visual notes in a board format.
 * Table: `tablica`.
 
-### 💰 Wallet
+### Wallet
 * Manage user finances.
 * Table: `portfel`.
 
-### ✏️ Drawings / Painting
+### Drawings / Painting
 * In-browser drawing editor.
 * Ability to save drawings to the gallery.
-
-### 🗂️ Disc
-* Creating folders and files in various formats
-* File uploading and editing
-
-### 📨 Chat
-* Messages with notification system,
-* Ability to send emoticons and links
-
-### 📋 Tasks
-* Tasks between users
-* Notification system
-* A view of progress
-
-### 👤 Profile
-* data editing + avatar upload
 
 ## Navigation
 * All modules are accessible from `nav.php`.
@@ -120,3 +104,5 @@ index.php               # Main entry point to run the app
 
 ## License
 * MIT License
+
+# optivio-app
