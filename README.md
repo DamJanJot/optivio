@@ -1,4 +1,4 @@
-# Optivio App - README.md
+# Optivio App 🧩
 
 ## Project Description
 
