@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../core/env_loader.php'; 
+<?php require_once __DIR__ . '/../../core/env_loader.php'; 
 $charset = 'utf8mb4';
 
 $options = [

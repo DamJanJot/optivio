@@ -1,6 +1,5 @@
-<?php require_once __DIR__ . '/../core/env_loader.php'; 
+<?php require_once __DIR__ . '/../../core/env_loader.php'; 
 require_once 'connect.php';
-require_once 'env_loader.php';
 
 // dodaj te 3 linie:
 require_once 'phpmailer/src/PHPMailer.php';

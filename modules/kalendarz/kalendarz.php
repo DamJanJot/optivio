@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../core/env_loader.php'; ?>
+<?php require_once __DIR__ . '/../../core/env_loader.php'; ?>
 <?php session_start(); if (!isset($_SESSION['loggedin'])) { header('Location: ../login.php'); exit(); } ?>
 <!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalendarz</title><style>body{background:#0f0f13;color:white;padding:10px;text-align:center;font-family:sans-serif}

@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../core/env_loader.php'; 
+require_once __DIR__ . '/../../core/env_loader.php'; 
 
 $charset = 'utf8mb4';
 

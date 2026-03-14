@@ -27,6 +27,22 @@ MAIL_FROM_NAME=YourName
 4. Make sure all folders have the proper permissions (e.g., `uploads/`).
 5. Open `nav.php` in your browser.
 
+## CBA Hosting Quick Setup
+
+1. Upload project files to your CBA account.
+2. Copy `.env.cba.example` to `.env` in project root.
+3. Fill database variables in `.env` with values from CBA panel:
+
+```
+DB_HOST=...
+DB_NAME=...
+DB_USER=...
+DB_PASS=...
+```
+
+4. Verify that `.env` is in the project root (same level as `index.php` and `core/`).
+5. If login still fails, print env values temporarily (without password) to confirm loading.
+
 ## Project Structure
 
 ```
@@ -50,7 +66,7 @@ MAIL_FROM_NAME=YourName
     chat/               # Chat
 /views/
     nav.php             # Application navigation
-    profil.php          # User profile 
+    profil.php          # User profile
 
 /uploads/               # Files uploaded by users
 .env                    # Sensitive data (excluded from the repository)
@@ -61,68 +77,81 @@ index.php               # Main entry point to run the app
 ## Modules and Features
 
 ### 📝 Notebook
-* Create, edit, and delete notes.
-* Data stored in the `notatki` table.
+
+- Create, edit, and delete notes.
+- Data stored in the `notatki` table.
 
 ### ✅ ToDo / Tasks
-* Tasks divided into categories: to-do, in progress, done.
-* Goals within tasks, with checkboxes and a progress bar.
-* Notifications for goals assigned to a user.
-* Tables: `taski`, `cele`, `powiadomienia`.
+
+- Tasks divided into categories: to-do, in progress, done.
+- Goals within tasks, with checkboxes and a progress bar.
+- Notifications for goals assigned to a user.
+- Tables: `taski`, `cele`, `powiadomienia`.
 
 ### 🖼️ Gallery
-* View and add photos.
-* File upload support.
-* Table: `galeria`.
+
+- View and add photos.
+- File upload support.
+- Table: `galeria`.
 
 ### 🖥️ Terminal
-* Simulated terminal in the browser.
+
+- Simulated terminal in the browser.
 
 ### 📅 Calendar
-* Display events.
-* Add, edit, and delete events.
-* Table: `kalendarz`.
+
+- Display events.
+- Add, edit, and delete events.
+- Table: `kalendarz`.
 
 ### 📌 Board
-* Create and edit visual notes in a board format.
-* Table: `tablica`.
+
+- Create and edit visual notes in a board format.
+- Table: `tablica`.
 
 ### 💰 Wallet
-* Manage user finances.
-* Table: `portfel`.
+
+- Manage user finances.
+- Table: `portfel`.
 
 ### ✏️ Drawings / Painting
-* In-browser drawing editor.
-* Ability to save drawings to the gallery.
+
+- In-browser drawing editor.
+- Ability to save drawings to the gallery.
 
 ### 🗂️ Disc
-* Creating folders and files in various formats
-* File uploading and editing
+
+- Creating folders and files in various formats
+- File uploading and editing
 
 ### 📨 Chat
-* Messages with notification system,
-* Ability to send emoticons and links
+
+- Messages with notification system,
+- Ability to send emoticons and links
 
 ### 📋 Tasks
-* Tasks between users
-* Notification system
-* A view of progress
+
+- Tasks between users
+- Notification system
+- A view of progress
 
 ### 👤 Profile
-* data editing + avatar upload
+
+- data editing + avatar upload
 
 ## Navigation
-* All modules are accessible from `nav.php`.
-* Top and bottom navigation bars allow switching between modules.
-* Modules share core files from `/core/` and styles from `/assets/`.
+
+- All modules are accessible from `nav.php`.
+- Top and bottom navigation bars allow switching between modules.
+- Modules share core files from `/core/` and styles from `/assets/`.
 
 ## SQL File (database.sql)
-* Contains tables:  
+
+- Contains tables:  
   `uzytkownicy`, `taski`, `cele`, `powiadomienia`,  
   `notatki`, `galeria`, `kalendarz`, `portfel`, `tablica`.
-* All relationships and primary keys are properly defined.
+- All relationships and primary keys are properly defined.
 
 ## License
-* MIT License
 
-
+- MIT License

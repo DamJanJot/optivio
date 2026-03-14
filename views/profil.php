@@ -7,7 +7,16 @@ if (!isset($_SESSION['loggedin'])) {
 
 require_once __DIR__ . '/../core/env_loader.php'; 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$host = getenv('DB_HOST');
+$dbname = getenv('DB_NAME');
+$username = getenv('DB_USER');
+$password = getenv('DB_PASS');
+
+if (!$host || !$dbname || !$username) {
+  die('Brak konfiguracji DB w zmiennych środowiskowych (DB_HOST, DB_NAME, DB_USER, DB_PASS).');
+}
+
+$conn = new mysqli($host, $username, $password, $dbname);
 $conn->set_charset("utf8");
 
 if ($conn->connect_error) {

@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../core/env_loader.php'; 
+<?php require_once __DIR__ . '/../../core/env_loader.php'; 
 session_start();
 
 

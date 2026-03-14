@@ -6,7 +6,6 @@ if (!isset($_SESSION['loggedin'])) {
 }
 
 require 'db.php';
-require 'env_loader.php';
 
 $user_id = $_SESSION['id'];
 $list_id = (int)$_GET['id'];
