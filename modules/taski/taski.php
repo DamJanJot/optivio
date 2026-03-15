@@ -25,6 +25,13 @@ $me = $_SESSION['id'];
 $stmt = $pdo->prepare("UPDATE zadania_mobile_uzytkownicy SET przeczytane = 1 WHERE user_id = ?");
 $stmt->execute([$me]);
 
+$celeFeatureEnabled = true;
+try {
+  $pdo->query("SELECT id FROM cele LIMIT 1");
+} catch (Throwable $e) {
+  $celeFeatureEnabled = false;
+}
+
 
 ?>
 
@@ -100,6 +107,63 @@ $stmt->execute([$me]);
 
   <p><?= nl2br(htmlspecialchars($z['opis'])) ?></p>
 
+  <?php
+    $cele = [];
+    $wykonaneCele = 0;
+    $procent = 0;
+    if ($celeFeatureEnabled) {
+      try {
+        $cele_stmt = $pdo->prepare("SELECT id, opis, wykonane FROM cele WHERE zadanie_id = ? ORDER BY id ASC");
+        $cele_stmt->execute([$z['zadanie_id']]);
+        $cele = $cele_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $wykonaneCele = count(array_filter($cele, fn($c) => (int) $c['wykonane'] === 1));
+        $procent = count($cele) > 0 ? (int) round(($wykonaneCele / count($cele)) * 100) : 0;
+      } catch (Throwable $e) {
+        $cele = [];
+        $procent = 0;
+      }
+    }
+  ?>
+
+  <?php if ($celeFeatureEnabled): ?>
+    <?php if (count($cele) > 0): ?>
+      <div class="mt-3">
+        <strong>Cele:</strong>
+        <ul class="list-unstyled mb-2">
+          <?php foreach ($cele as $cel): ?>
+            <li>
+              <form method="POST" action="aktualizuj_cel.php" style="display:inline;">
+                <input type="hidden" name="id" value="<?= $cel['id'] ?>">
+                <input type="checkbox" name="wykonane" value="1" onchange="this.form.submit()" <?= ((int) $cel['wykonane'] === 1) ? 'checked' : '' ?>>
+              </form>
+              <?= htmlspecialchars($cel['opis']) ?>
+              <?php if ($z['autor_id'] == $_SESSION['id']): ?>
+                <form method="POST" action="usun_cel.php" style="display:inline;">
+                  <input type="hidden" name="id" value="<?= $cel['id'] ?>">
+                  <button class="btn btn-sm btn-link text-danger">❌</button>
+                </form>
+              <?php endif; ?>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($z['autor_id'] == $_SESSION['id']): ?>
+      <form action="dodaj_cel.php" method="POST" class="d-flex gap-2 mt-2 mb-2">
+        <input type="hidden" name="zadanie_id" value="<?= $z['zadanie_id'] ?>">
+        <input type="text" name="opis" placeholder="Nowy cel" class="form-control" required>
+        <button class="btn btn-primary">➕</button>
+      </form>
+    <?php endif; ?>
+
+    <div class="progress mb-2">
+      <div class="progress-bar bg-success" role="progressbar" style="width: <?= $procent ?>%;" aria-valuenow="<?= $procent ?>" aria-valuemin="0" aria-valuemax="100">
+        <?= $procent ?>%
+      </div>
+    </div>
+  <?php endif; ?>
+
   <?php if (!$z['wykonane']): ?>
     <form method='POST' action='wykonaj_task.php'>
       <input type='hidden' name='id' value='<?= $z['zadanie_id'] ?>'>
@@ -159,6 +223,63 @@ $stmt->execute([$me]);
   </div>
 
   <p><?= nl2br(htmlspecialchars($z['opis'])) ?></p>
+
+  <?php
+    $cele = [];
+    $wykonaneCele = 0;
+    $procent = 0;
+    if ($celeFeatureEnabled) {
+      try {
+        $cele_stmt = $pdo->prepare("SELECT id, opis, wykonane FROM cele WHERE zadanie_id = ? ORDER BY id ASC");
+        $cele_stmt->execute([$z['zadanie_id']]);
+        $cele = $cele_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $wykonaneCele = count(array_filter($cele, fn($c) => (int) $c['wykonane'] === 1));
+        $procent = count($cele) > 0 ? (int) round(($wykonaneCele / count($cele)) * 100) : 0;
+      } catch (Throwable $e) {
+        $cele = [];
+        $procent = 0;
+      }
+    }
+  ?>
+
+  <?php if ($celeFeatureEnabled): ?>
+    <?php if (count($cele) > 0): ?>
+      <div class="mt-3">
+        <strong>Cele:</strong>
+        <ul class="list-unstyled mb-2">
+          <?php foreach ($cele as $cel): ?>
+            <li>
+              <form method="POST" action="aktualizuj_cel.php" style="display:inline;">
+                <input type="hidden" name="id" value="<?= $cel['id'] ?>">
+                <input type="checkbox" name="wykonane" value="1" onchange="this.form.submit()" <?= ((int) $cel['wykonane'] === 1) ? 'checked' : '' ?>>
+              </form>
+              <?= htmlspecialchars($cel['opis']) ?>
+              <?php if ($z['autor_id'] == $_SESSION['id']): ?>
+                <form method="POST" action="usun_cel.php" style="display:inline;">
+                  <input type="hidden" name="id" value="<?= $cel['id'] ?>">
+                  <button class="btn btn-sm btn-link text-danger">❌</button>
+                </form>
+              <?php endif; ?>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($z['autor_id'] == $_SESSION['id']): ?>
+      <form action="dodaj_cel.php" method="POST" class="d-flex gap-2 mt-2 mb-2">
+        <input type="hidden" name="zadanie_id" value="<?= $z['zadanie_id'] ?>">
+        <input type="text" name="opis" placeholder="Nowy cel" class="form-control" required>
+        <button class="btn btn-primary">➕</button>
+      </form>
+    <?php endif; ?>
+
+    <div class="progress mb-2">
+      <div class="progress-bar bg-success" role="progressbar" style="width: <?= $procent ?>%;" aria-valuenow="<?= $procent ?>" aria-valuemin="0" aria-valuemax="100">
+        <?= $procent ?>%
+      </div>
+    </div>
+  <?php endif; ?>
 
   <?php if (!$z['wykonane']): ?>
     <form method='POST' action='wykonaj_task.php'>

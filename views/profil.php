@@ -27,15 +27,27 @@ $uzytkownik_id = $_SESSION['id'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['zdjecie_profilowe']) && $_FILES['zdjecie_profilowe']['error'] == UPLOAD_ERR_OK) {
-        $zdjecie_profilowe = './uploads/' . basename($_FILES['zdjecie_profilowe']['name']);
-        move_uploaded_file($_FILES['zdjecie_profilowe']['tmp_name'], $zdjecie_profilowe);
+    $uploadDir = dirname(__DIR__) . '/uploads/';
+    if (!is_dir($uploadDir)) {
+      mkdir($uploadDir, 0755, true);
+    }
 
-        $sql = "UPDATE uzytkownicy SET zdjecie_profilowe = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $zdjecie_profilowe, $uzytkownik_id);
-        $stmt->execute();
-        $_SESSION['avatar'] = $zdjecie_profilowe;
-        $stmt->close();
+    $originalName = basename($_FILES['zdjecie_profilowe']['name']);
+    $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+    $safeExt = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true) ? $ext : 'png';
+    $fileName = 'avatar_' . $uzytkownik_id . '_' . time() . '.' . $safeExt;
+    $targetFsPath = $uploadDir . $fileName;
+
+    if (move_uploaded_file($_FILES['zdjecie_profilowe']['tmp_name'], $targetFsPath)) {
+      $zdjecie_profilowe = 'uploads/' . $fileName;
+
+      $sql = "UPDATE uzytkownicy SET zdjecie_profilowe = ? WHERE id = ?";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("si", $zdjecie_profilowe, $uzytkownik_id);
+      $stmt->execute();
+      $_SESSION['avatar'] = $zdjecie_profilowe;
+      $stmt->close();
+    }
     }
 
     $nick = $_POST['nick'];
@@ -78,10 +90,17 @@ $conn->close();
   
 
   <?php
-    $default_photo = "./uploads/default.png";
-    $profile_photo = !empty($uzytkownik['zdjecie_profilowe']) && file_exists($uzytkownik['zdjecie_profilowe']) 
-                      ? htmlspecialchars($uzytkownik['zdjecie_profilowe']) 
-                      : $default_photo;
+    $default_photo = '../uploads/default.png';
+    $profile_photo = $default_photo;
+
+    if (!empty($uzytkownik['zdjecie_profilowe'])) {
+      $normalizedAvatarPath = ltrim(str_replace('\\', '/', $uzytkownik['zdjecie_profilowe']), './');
+      $normalizedAvatarPath = ltrim($normalizedAvatarPath, '/');
+      $avatarFsPath = dirname(__DIR__) . '/' . $normalizedAvatarPath;
+      if ($normalizedAvatarPath !== '' && file_exists($avatarFsPath)) {
+        $profile_photo = '../' . $normalizedAvatarPath;
+      }
+    }
   ?>
   <div class="text-center">
     <img src="<?= $profile_photo ?>" alt="Zdjęcie Profilowe" class="profile-image">

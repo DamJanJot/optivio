@@ -140,9 +140,16 @@ $user_id = $_SESSION['id'];
 $stmt = $pdo->prepare("SELECT zdjecie_profilowe FROM uzytkownicy WHERE id = ?");
 $stmt->execute([$user_id]);
 $avatar_path = $stmt->fetchColumn();
-$avatar = (!empty($avatar_path) && file_exists(__DIR__ . '/' . $avatar_path)) 
-    ? '/' . $avatar_path 
-    : '/uploads/default.png';
+$avatar = '../uploads/default.png';
+
+if (!empty($avatar_path)) {
+  $normalizedAvatarPath = ltrim(str_replace('\\', '/', $avatar_path), './');
+  $normalizedAvatarPath = ltrim($normalizedAvatarPath, '/');
+  $avatarFsPath = dirname(__DIR__) . '/' . $normalizedAvatarPath;
+  if ($normalizedAvatarPath !== '' && file_exists($avatarFsPath)) {
+    $avatar = '../' . $normalizedAvatarPath;
+  }
+}
 ?>
 <img src="<?= htmlspecialchars($avatar) ?>" class="avatar-icon">
 
