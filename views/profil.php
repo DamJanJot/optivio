@@ -90,7 +90,7 @@ $conn->close();
   
 
   <?php
-    $default_photo = '../uploads/default.png';
+    $default_photo = '../public/assets/img/default.png';
     $profile_photo = $default_photo;
 
     if (!empty($uzytkownik['zdjecie_profilowe'])) {

@@ -48,6 +48,8 @@ $conn->close();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/ef9d577567.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="../public/assets/css/portfolio_app.css" />
+  <link rel="website icon" type="png" href="../public/assets/img/logo.png">
+  <meta name="description" content="Me website">
 </head>
 <body>
 
@@ -140,7 +142,7 @@ $user_id = $_SESSION['id'];
 $stmt = $pdo->prepare("SELECT zdjecie_profilowe FROM uzytkownicy WHERE id = ?");
 $stmt->execute([$user_id]);
 $avatar_path = $stmt->fetchColumn();
-$avatar = '../uploads/default.png';
+$avatar = '../public/assets/img/default.png';
 
 if (!empty($avatar_path)) {
   $normalizedAvatarPath = ltrim(str_replace('\\', '/', $avatar_path), './');
@@ -178,7 +180,7 @@ if (!empty($avatar_path)) {
   
   <script>
   function updateUnread() {
-    fetch('/czat/unread_count.php')
+    fetch('../modules/czat/unread_count.php')
       .then(res => res.json())
       .then(data => {
         const btn = document.getElementById('chat-btn');

@@ -38,7 +38,7 @@ $rozmowy = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php
       $img = (!empty($row['zdjecie_profilowe']) && file_exists('../' . $row['zdjecie_profilowe']))
         ? '../' . $row['zdjecie_profilowe']
-        : '../uploads/default.png';
+        : '../../public/assets/img/default.png';
     ?>
     <a class="user" href="rozmowa.php?id=<?= $row['id'] ?>">
       <img src="<?= $img ?>" alt="avatar">

@@ -34,7 +34,7 @@ foreach ($msgs as $msg) {
   if (!empty($imgPath) && file_exists(__DIR__ . '/../' . $imgPath)) {
       $img = '/' . $imgPath;
   } else {
-      $img = '/uploads/default.png';
+      $img = '../../public/assets/img/default.png';
   }
 
   
