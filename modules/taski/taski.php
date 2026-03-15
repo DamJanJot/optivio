@@ -75,6 +75,8 @@ $stmt->execute([$me]);
 
 <h6 class='mb-4  py-2' >Aktualne <img width="16" height="16" src="https://img.icons8.com/arcade/32/pin.png" alt="pin"/></h6>
 
+<div class='task-container'>
+
 <?php foreach ($zadania as $z): ?>
   <?php if (!$z['wykonane']): ?>
     <div class='task'>
@@ -129,8 +131,11 @@ $stmt->execute([$me]);
 
   <?php endif; ?>
 <?php endforeach; ?>
+</div>
 
 <h6 class='mt-5 mb-4 '>Wykonane <img width="16" height="16" src="https://img.icons8.com/arcade/28/checkmark.png" alt="checkmark"/></h6>
+
+<div class='task-container'>
 
 <?php foreach ($zadania as $z): ?>
   <?php if ($z['wykonane']): ?>
@@ -187,15 +192,14 @@ $stmt->execute([$me]);
   <?php endif; ?>
 <?php endforeach; ?>
 
+</div>
+
 <script>
   function toggleEdit(id) {
     const el = document.getElementById(id);
     el.style.display = el.style.display === 'none' ? 'block' : 'none';
   }
 </script>
-
-</body>
-</html>
 
 <?php
 function getUserName($id, $users) {
