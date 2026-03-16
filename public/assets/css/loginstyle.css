@@ -9,7 +9,7 @@ body {
 
 .headzdj {
     position: relative;
-    background-image: url(".../img/16281857_rm125batch2-ning-11b-frames.jpg");
+    background-image: url("../img/tlodwa.png");
     background-position: bottom;
     background-attachment: fixed;
     background-size: cover;
@@ -27,9 +27,9 @@ body {
 
 .phone {
     width: 330px;
- /*   max-width: 598px;   */
+    max-width: 598px;   
     height: 566px;
-   padding: 30px 20px; 
+    padding: 30px 20px; 
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
