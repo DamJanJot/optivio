@@ -1,16 +1,18 @@
 body {
     font-family: 'Segoe UI', sans-serif;
-    margin: 20px;
-    background: #1e1e2f;
-    color: #ccc;
+    margin: 0;
+    min-height: 100vh;
+    background: #1a1c2c;
+    color: #e5e7eb;
 }
 
-h1, h2, h3 {
-    color: #aaa;
+.back-link {
+    margin: 18px;
 }
 
+.back-link a,
 a {
-    color: #66ccff;
+    color: #7dd3fc;
     text-decoration: none;
 }
 
@@ -18,91 +20,125 @@ a:hover {
     text-decoration: underline;
 }
 
+.gallery-shell {
+    min-height: calc(100vh - 74px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 28px 16px 96px;
+}
+
+.gallery-card {
+    width: min(920px, 100%);
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.gallery-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+h1 {
+    color: #66ccff;
+    margin: 0 0 10px;
+    font-size: 28px;
+}
+
 .nav a {
     margin-right: 10px;
     font-size: 14px;
-    color: #888;
 }
 
-.nav a:hover {
-    color: #66ccff;
+.gallery-actions {
+    display: flex;
+    gap: 10px;
 }
 
-button {
+button,
+input[type="submit"] {
     padding: 8px 12px;
-    background-color: rgba(255,255,255,0.05);
-    border: 2px dashed rgba(255,255,255,0.2);
+    background-color: rgba(255,255,255,0.06);
+    border: 1px dashed rgba(255,255,255,0.24);
     border-radius: 10px;
-    color: #aaa;
+    color: #e5e7eb;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
+    transition: background-color 0.2s, transform 0.2s, border-color .2s;
 }
 
-button:hover {
-    background-color: rgba(255,255,255,0.08);
-    transform: scale(1.05);
+button:hover,
+input[type="submit"]:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-color: #38bdf8;
+    transform: translateY(-1px);
 }
 
 .gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 18px;
+}
+
+.folder,
+.item {
+    background: rgba(31,33,43,.9);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+    text-align: center;
 }
 
 .folder {
-    background: #1f212b;
     padding: 20px;
-    border-radius: 10px;
     color: #66ccff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
     font-weight: bold;
-    text-align: center;
-    width: 140px;
 }
 
-.folder:hover {
+.folder:hover,
+.item:hover {
     background: #2a2c38;
 }
 
 .item {
-    background: #1f212b;
     padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    width: 150px;
-    text-align: center;
     position: relative;
     overflow: hidden;
 }
 
 .item img {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    aspect-ratio: 1;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: transform 0.3s;
 }
 
 .item img:hover {
-    transform: scale(1.1);
+    transform: scale(1.04);
 }
 
-.item button, .item form {
+.item button,
+.item form {
     margin-top: 5px;
 }
 
 .item .info {
-    color: #888;
+    color: #a6adbb;
     font-size: 12px;
 }
 
 #previewModal {
     display:none;
     position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    inset: 0;
     background: rgba(0,0,0,0.9);
     justify-content: center;
     align-items: center;
@@ -124,9 +160,20 @@ button:hover {
 }
 
 .form-box {
-    background: #1f212b;
-    padding: 20px;
-    margin-top: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    background: rgba(31,33,43,.9);
+    padding: 16px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+.form-box input {
+    max-width: 100%;
+}
+
+@media (max-width: 640px) {
+    .gallery-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }

@@ -21,3 +21,6 @@ vendor/
 # Katalogi logów
 logs/
 *.log
+uploads/*
+!uploads/.gitkeep
+*.zip

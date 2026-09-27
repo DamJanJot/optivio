@@ -1,121 +1,140 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../core/access_control.php';
+optivio_require_login();
+optivio_require_app_access('tablica');
+
 require 'db.php';
 
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../login.php');
+$user_id = (int) $_SESSION['id'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tresc'])) {
+    $tresc = trim((string) $_POST['tresc']);
+    if ($tresc !== '') {
+        $stmt = $pdo->prepare("INSERT INTO tablica_posty (user_id, tresc) VALUES (?, ?)");
+        $stmt->execute([$user_id, $tresc]);
+    }
+    header("Location: tablica.php");
     exit();
 }
 
-$user_id = $_SESSION['id'];
-
-// Dodawanie posta
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tresc'])) {
-    $tresc = trim($_POST['tresc']);
-    if ($tresc != "") {
-        $stmt = $pdo->prepare("INSERT INTO tablica_posty (user_id, tresc) VALUES (?, ?)");
-        $stmt->execute([$user_id, $tresc]);
-        header("Location: tablica.php");
-        exit();
-    }
-}
-
-// Usuwanie posta
 if (isset($_GET['delete'])) {
-    $delete_id = (int)$_GET['delete'];
+    $delete_id = (int) $_GET['delete'];
     $pdo->prepare("DELETE FROM tablica_posty WHERE id = ? AND user_id = ?")->execute([$delete_id, $user_id]);
     header("Location: tablica.php");
     exit();
 }
 
-// Dodawanie lajka
 if (isset($_GET['like'])) {
-    $like_post = (int)$_GET['like'];
-    $pdo->prepare("INSERT IGNORE INTO tablica_lajki (user_id, post_id) VALUES (?, ?)")->execute([$user_id, $like_post]);
+    $like_post = (int) $_GET['like'];
+    $exists = $pdo->prepare("SELECT 1 FROM tablica_lajki WHERE user_id = ? AND post_id = ? LIMIT 1");
+    $exists->execute([$user_id, $like_post]);
+    if ($exists->fetchColumn()) {
+        $pdo->prepare("DELETE FROM tablica_lajki WHERE user_id = ? AND post_id = ?")->execute([$user_id, $like_post]);
+    } else {
+        $pdo->prepare("INSERT IGNORE INTO tablica_lajki (user_id, post_id) VALUES (?, ?)")->execute([$user_id, $like_post]);
+    }
     header("Location: tablica.php");
     exit();
 }
 
-// Dodawanie komentarza
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['comment']) && !empty($_POST['post_id'])) {
-    $comment = trim($_POST['comment']);
-    $post_id = (int)$_POST['post_id'];
-    $pdo->prepare("INSERT INTO tablica_komentarze (user_id, post_id, komentarz) VALUES (?, ?, ?)")->execute([$user_id, $post_id, $comment]);
+    $comment = trim((string) $_POST['comment']);
+    $post_id = (int) $_POST['post_id'];
+    if ($comment !== '') {
+        $pdo->prepare("INSERT INTO tablica_komentarze (user_id, post_id, komentarz) VALUES (?, ?, ?)")->execute([$user_id, $post_id, $comment]);
+    }
     header("Location: tablica.php");
     exit();
 }
 
-// Pobranie postów + użytkownicy + lajki + komentarze
 $stmt = $pdo->prepare("
 SELECT p.*, u.imie, u.nazwisko, u.zdjecie_profilowe,
-(SELECT COUNT(*) FROM tablica_lajki WHERE post_id = p.id) AS lajki
+(SELECT COUNT(*) FROM tablica_lajki WHERE post_id = p.id) AS lajki,
+EXISTS(SELECT 1 FROM tablica_lajki WHERE post_id = p.id AND user_id = ?) AS liked_by_me
 FROM tablica_posty p
 JOIN uzytkownicy u ON p.user_id = u.id
 ORDER BY p.data_dodania DESC
 ");
-$stmt->execute();
-$posts = $stmt->fetchAll();
+$stmt->execute([$user_id]);
+$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tablica PRO</title>
+<title>Tablica</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h5><a href='../apki/apki.php' style='color: #aaa; text-decoration:none;'>← Powrót</a></h5>
-<h1>Tablica</h1>
+<h5 class="back"><a href="../apki/apki.php">← Powrót</a></h5>
 
-<!-- Dodawanie posta -->
-<button onclick="document.getElementById('addForm').style.display='block'">➕ Dodaj post</button>
-<div id="addForm" style="display:none; margin-top: 10px;">
-<form method="post">
-<textarea name="tresc" rows="3" placeholder="Napisz coś..." required></textarea>
-<button type="submit">Dodaj</button>
-</form>
+<main class="feed-shell">
+<section class="feed">
+<div class="feed-top">
+  <h1>Tablica</h1>
+  <button class="add-post" onclick="toggleForm()" type="button">+ Dodaj post</button>
 </div>
 
-<hr>
+<div id="addForm" class="composer" style="display:none;">
+  <form method="post">
+    <textarea name="tresc" rows="3" placeholder="Napisz coś..." required></textarea>
+    <button type="submit">Dodaj</button>
+  </form>
+</div>
 
-<!-- Wyświetlanie postów -->
 <?php foreach ($posts as $post): ?>
-<?php
-$img_path = (!empty($post['zdjecie_profilowe']) && file_exists('../' . $post['zdjecie_profilowe']))
-    ? '../' . $post['zdjecie_profilowe']
-    : '../uploads/default.png';
-?>
-<div class="post">
-<div class="post-header">
-<img src="<?= $img_path ?>" alt="avatar">
-<b><?= htmlspecialchars($post['imie'] . " " . $post['nazwisko']) ?></b> - <i><?= $post['data_dodania'] ?></i>
-<?php if ($post['user_id'] == $user_id): ?>
-<a class="delete" href="?delete=<?= $post['id'] ?>">Usuń</a>
+<?php $postAvatar = optivio_stored_file_url((string) $post['zdjecie_profilowe']); ?>
+<article class="post">
+  <div class="post-header">
+    <img src="<?php echo htmlspecialchars($postAvatar, ENT_QUOTES, 'UTF-8'); ?>" alt="avatar">
+    <div>
+      <b><?php echo htmlspecialchars(trim($post['imie'] . " " . $post['nazwisko']), ENT_QUOTES, 'UTF-8'); ?></b>
+      <time><?php echo htmlspecialchars((string) $post['data_dodania'], ENT_QUOTES, 'UTF-8'); ?></time>
+    </div>
+    <?php if ((int) $post['user_id'] === $user_id): ?>
+      <a class="delete" href="?delete=<?php echo (int) $post['id']; ?>" title="Usuń">Usuń</a>
+    <?php endif; ?>
+  </div>
+  <p><?php echo nl2br(htmlspecialchars((string) $post['tresc'], ENT_QUOTES, 'UTF-8')); ?></p>
+
+  <div class="post-actions">
+    <a class="heart <?php echo (int) $post['liked_by_me'] === 1 ? 'liked' : ''; ?>" href="?like=<?php echo (int) $post['id']; ?>" aria-label="Polub">
+      <?php echo (int) $post['liked_by_me'] === 1 ? '♥' : '♡'; ?>
+    </a>
+    <span><?php echo (int) $post['lajki']; ?></span>
+  </div>
+
+  <?php
+  $comments = $pdo->prepare("SELECT k.*, u.imie, u.nazwisko, u.zdjecie_profilowe FROM tablica_komentarze k JOIN uzytkownicy u ON k.user_id = u.id WHERE k.post_id = ? ORDER BY k.data_dodania ASC");
+  $comments->execute([(int) $post['id']]);
+  foreach ($comments as $comment):
+      $commentAvatar = optivio_stored_file_url((string) $comment['zdjecie_profilowe']);
+  ?>
+    <div class="comment">
+      <img src="<?php echo htmlspecialchars($commentAvatar, ENT_QUOTES, 'UTF-8'); ?>" alt="avatar">
+      <div>
+        <b><?php echo htmlspecialchars($comment['imie'] . ' ' . $comment['nazwisko'], ENT_QUOTES, 'UTF-8'); ?></b>
+        <span><?php echo htmlspecialchars((string) $comment['komentarz'], ENT_QUOTES, 'UTF-8'); ?></span>
+      </div>
+    </div>
+  <?php endforeach; ?>
+
+  <form method="post" class="comment-form">
+    <input type="hidden" name="post_id" value="<?php echo (int) $post['id']; ?>">
+    <input type="text" name="comment" placeholder="Dodaj komentarz..." required>
+    <button type="submit">Dodaj</button>
+  </form>
+</article>
+<?php endforeach; ?>
+
+<?php if (empty($posts)): ?>
+  <div class="empty-feed">Jeszcze nie ma żadnych postów.</div>
 <?php endif; ?>
-</div>
-<p><?= nl2br(htmlspecialchars($post['tresc'])) ?></p>
-
-<b>Lajki: <?= $post['lajki'] ?></b> <a href="?like=<?= $post['id'] ?>">❤️ Polub</a>
-
-<?php
-$comments = $pdo->prepare("SELECT k.*, u.imie, u.nazwisko FROM tablica_komentarze k JOIN uzytkownicy u ON k.user_id = u.id WHERE k.post_id = ? ORDER BY k.data_dodania ASC");
-$comments->execute([$post['id']]);
-foreach ($comments as $comment):
-?>
-<div class="comment"><b><?= htmlspecialchars($comment['imie'].' '.$comment['nazwisko']) ?>:</b> <?= htmlspecialchars($comment['komentarz']) ?></div>
-<?php endforeach; ?>
-
-<form method="post">
-<input type="hidden" name="post_id" value="<?= $post['id'] ?>">
-<input type="text" name="comment" placeholder="Dodaj komentarz..." required>
-<button type="submit">Dodaj komentarz</button>
-</form>
-
-</div>
-<?php endforeach; ?>
+</section>
+</main>
 
 <script>
 function toggleForm() {

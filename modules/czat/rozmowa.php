@@ -1,111 +1,104 @@
 <?php
-session_start();
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../login.php');
-    header('Content-Type: text/html; charset=utf-8');
+require_once __DIR__ . '/../../core/access_control.php';
+optivio_require_login();
+optivio_require_app_access('czat');
+require_once 'connect.php';
 
-    exit();
+$me = (int) $_SESSION['id'];
+$other = (int) ($_GET['id'] ?? 0);
+
+$activitySelect = $chatHasLastActivity ? 'ostatnia_aktywnosc' : 'NULL AS ostatnia_aktywnosc';
+$stmt = $pdo->prepare("SELECT id, imie, nazwisko, zdjecie_profilowe, $activitySelect FROM uzytkownicy WHERE id = ? LIMIT 1");
+$stmt->execute([$other]);
+$otherUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$otherUser) {
+    http_response_code(404);
+    exit('Nie znaleziono uzytkownika.');
 }
 
-require_once 'connect.php';
-$me = $_SESSION['id'];
-$other = (int)$_GET['id'];
-
-$stmt = $pdo->prepare(
-  "SELECT w.*, u.zdjecie_profilowe
-   FROM wiadomosci w
-   JOIN uzytkownicy u ON u.id = w.nadawca_id
-   WHERE (w.nadawca_id = :me AND w.odbiorca_id = :other)
-      OR (w.nadawca_id = :other AND w.odbiorca_id = :me)
-   ORDER BY w.data_wyslania ASC"
-);
-$stmt->execute(['me' => $me, 'other' => $other]);
-$wiadomosci = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-
-
+$otherAvatar = optivio_stored_file_url((string) ($otherUser['zdjecie_profilowe'] ?? ''));
+$displayName = trim((string) ($otherUser['imie'] ?? '') . ' ' . (string) ($otherUser['nazwisko'] ?? ''));
+$lastActivity = $otherUser['ostatnia_aktywnosc'] ?? null;
+$lastActivityTimestamp = $lastActivity ? strtotime((string) $lastActivity) : false;
+if ($lastActivityTimestamp && time() - $lastActivityTimestamp < 180) {
+    $lastActivityLabel = 'Aktywny teraz';
+} elseif ($lastActivityTimestamp) {
+    $lastActivityLabel = 'Ostatnio aktywny: ' . date('d.m.Y H:i', $lastActivityTimestamp);
+} else {
+    $lastActivityLabel = 'Brak informacji o ostatniej aktywnosci';
+}
+$uploadError = trim((string) ($_GET['upload_error'] ?? ''));
 ?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Rozmowa</title>
+  <title>Rozmowa z <?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/ef9d577567.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="./css/style_rozmowa.css">
+  <script src="https://kit.fontawesome.com/ef9d577567.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="./css/style_rozmowa.css?v=20260614-3">
 </head>
-<body class="container mt-3">  
-    <h5 class="mb-4"><a href="index.php" style="color: #aaa; text-decoration:none;">← Powrót</a></h5>
+<body>
+  <header class="chat-header">
+    <a href="index.php" class="back-link" aria-label="Powrot">&larr;</a>
+    <img
+      src="<?= htmlspecialchars($otherAvatar, ENT_QUOTES, 'UTF-8') ?>"
+      alt="Avatar"
+      class="header-avatar"
+      width="42"
+      height="42">
+    <div class="header-person">
+      <strong><?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8') ?></strong>
+      <span><?= htmlspecialchars($lastActivityLabel, ENT_QUOTES, 'UTF-8') ?></span>
+    </div>
+  </header>
 
-    <script>
-    
-    function linkify($text) {
-    $text = preg_replace(
-        '~(https?://[^\s]+)~i',
-        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
-        htmlspecialchars($text)
-    );
-    return $text;
-}
-    
-    </script>
+  <?php if ($uploadError !== ''): ?>
+    <div class="chat-alert"><?= htmlspecialchars($uploadError, ENT_QUOTES, 'UTF-8') ?></div>
+  <?php endif; ?>
 
-    <div id="chat-box"></div>
+  <main id="chat-box"></main>
 
-    <form method="post" action="wyslij.php">
-        <input type="hidden" name="odbiorca_id" value="<?= $other ?>">
-    <!--    <input type="text" id="tresc" name="tresc" placeholder="Napisz wiadomość..." required>
-    
-         ___________________________________ -->
-    
-        <div class="input-group mb-3">
-            <input type="text" id="tresc" name="tresc" class="form-control" placeholder="Napisz wiadomość..." required>
-            <button type="button" class="btn btn-outline-secondary" id="toggle-emojis">😊</button>
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
+  <form class="chat-composer" method="post" action="wyslij.php" enctype="multipart/form-data">
+    <input type="hidden" name="odbiorca_id" value="<?= $other ?>">
+    <div class="input-group">
+      <input type="text" id="tresc" name="tresc" class="form-control" placeholder="Napisz wiadomo&#347;&#263;...">
+      <label class="btn btn-outline-secondary mb-0 image-button" title="Dodaj zdjecie">
+        <i class="fa-solid fa-image"></i>
+        <input id="chat-image-input" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+      </label>
+      <button type="button" class="btn btn-outline-secondary" id="toggle-emojis" aria-label="Emoji" onclick="toggleEmojiPicker()">&#128522;</button>
+      <button type="submit" class="btn btn-primary" aria-label="Wyslij"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+    <div id="image-name" class="image-name"></div>
+    <div id="emoji-picker">
+      <button class="emoji" type="button">&#128512;</button>
+      <button class="emoji" type="button">&#128513;</button>
+      <button class="emoji" type="button">&#128514;</button>
+      <button class="emoji" type="button">&#129315;</button>
+      <button class="emoji" type="button">&#128517;</button>
+      <button class="emoji" type="button">&#128526;</button>
+      <button class="emoji" type="button">&#128525;</button>
+      <button class="emoji" type="button">&#128546;</button>
+      <button class="emoji" type="button">&#128519;</button>
+      <button class="emoji" type="button">&#128075;</button>
+      <button class="emoji" type="button">&#128591;</button>
+      <button class="emoji" type="button">&#10084;&#65039;</button>
+      <button class="emoji" type="button">&#128077;</button>
+      <button class="emoji" type="button">&#127881;</button>
+    </div>
+  </form>
 
-        <div id="emoji-picker" style="display: none; margin-bottom: 10px;">
-            <?php
-                $emojis = ['😀','😁','😂','🤣','😅','😎','😍','😢','😡','👍','🙏','❤️'];
-                foreach ($emojis as $emoji) {
-                    echo "<span class='emoji' style='cursor:pointer; font-size: 24px; margin-right: 5px;'>$emoji</span>";
-                }
-            ?>
-        </div>
-
-        <!-- ____________________<button></button>______________________ -->
-
-    
-        
-        
-    </form>
-
-
-
-
-    <!-- ______________________________________________ -->
-
-
-<script>
-  // Funkcja kopiowania tekstu z dowolnego elementu z klasą 'copy-box'
-  document.querySelectorAll('.copy-box').forEach(element => {
-    element.addEventListener('click', () => {
-      const textToCopy = element.getAttribute('data-copy');
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        alert(`Tekst skopiowany: ${textToCopy}`);
-      }).catch(err => {
-        console.error('Błąd podczas kopiowania: ', err);
-      });
-    });
-  });
-</script>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-  <script src="js/chat.js"></script>
+  <script>
+  function toggleEmojiPicker() {
+    var picker = document.getElementById('emoji-picker');
+    if (picker) {
+      picker.classList.toggle('is-open');
+    }
+  }
+  </script>
+  <script src="js/chat.js?v=20260614-3"></script>
 </body>
 </html>

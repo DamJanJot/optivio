@@ -1,13 +1,44 @@
 <?php
-session_start();
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../login.php');
-    exit();
+require_once __DIR__ . '/../../core/access_control.php';
+
+optivio_require_login();
+optivio_require_app_access('apki');
+
+$allowedApps = (array) (optivio_current_user_access()['apps'] ?? []);
+
+$cards = [
+    ['key' => 'notatnik', 'label' => 'Notatnik', 'icon' => 'https://img.icons8.com/arcade/64/task.png', 'path' => '../notatnik/note.php'],
+    ['key' => 'dysk', 'label' => 'Dysk', 'icon' => 'https://img.icons8.com/arcade/64/cloud-storage.png', 'path' => '../dysk/dysk.php'],
+    ['key' => 'galeria', 'label' => 'Galeria', 'icon' => 'https://img.icons8.com/arcade/50/gallery.png', 'path' => '../galeria/galeria.php'],
+    ['key' => 'todo', 'label' => 'ToDo', 'icon' => 'https://img.icons8.com/arcade/64/test-passed.png', 'path' => '../todo/todo_index.php'],
+    ['key' => 'tabele', 'label' => 'Tabele', 'icon' => 'https://img.icons8.com/arcade/64/activity-grid.png', 'path' => '../tabele/tabele.php'],
+    ['key' => 'terminal', 'label' => 'Terminal', 'icon' => 'https://img.icons8.com/arcade/64/console.png', 'path' => '../terminal_mobile/terminal.php'],
+    ['key' => 'kalendarz', 'label' => 'Kalendarz', 'icon' => 'https://img.icons8.com/arcade/64/calendar.png', 'path' => '../kalendarz/kalendarz.php'],
+    ['key' => 'tablica', 'label' => 'Tablica', 'icon' => 'https://img.icons8.com/arcade/50/flipboard.png', 'path' => '../tablica/read_all.php'],
+    ['key' => 'portfel', 'label' => 'Portfel', 'icon' => 'https://img.icons8.com/arcade/64/card-wallet.png', 'path' => '../portfel_mobile/portfel.php'],
+    ['key' => 'paint', 'label' => 'Rysunki', 'icon' => 'https://img.icons8.com/arcade/50/sign-up.png', 'path' => '../paint/paint_mabile.php'],
+    ['key' => 'nauka', 'label' => 'Nauka', 'icon' => 'https://img.icons8.com/arcade/50/translation.png', 'path' => '../nauka/nauka_ang.php'],
+    ['key' => 'admin_panel', 'label' => 'Admin', 'icon' => 'https://img.icons8.com/arcade/64/admin-settings-male.png', 'path' => '../../public/admin/index.php'],
+];
+
+$visibleCards = [];
+foreach ($cards as $card) {
+    if (in_array($card['key'], $allowedApps, true)) {
+        $visibleCards[] = $card;
+    }
 }
 
-$unread_tablica = json_decode(@file_get_contents("../tablica/unread_count.php"), true)['count'] ?? 0;
+$unreadTablica = 0;
+if (in_array('tablica', $allowedApps, true) && optivio_table_exists($pdo, 'tablica_posty') && optivio_table_exists($pdo, 'tablica_odczyt')) {
+    try {
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM tablica_posty WHERE id NOT IN (SELECT post_id FROM tablica_odczyt WHERE user_id = ?)');
+        $stmt->execute([(int) $_SESSION['id']]);
+        $unreadTablica = (int) $stmt->fetchColumn();
+    } catch (Throwable $e) {
+        $unreadTablica = 0;
+    }
+}
 ?>
-
 <!doctype html>
 <html lang="pl">
 <head>
@@ -18,79 +49,39 @@ $unread_tablica = json_decode(@file_get_contents("../tablica/unread_count.php"),
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://kit.fontawesome.com/ef9d577567.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="style.css">
-<style>
-#tablica-btn {
-    position: relative;
-}
-#tablica-btn .badge {
-    top: 0;
-    right: 0;
-    transform: translate(50%, -50%);
-    position: absolute;
-}
-</style>
 </head>
 <body class="bgzdj">
 
 <header class="bgzdj-shadow"></header>
 
-
-<h2 class="text-center  py-3">Apki <img width="34" height="34" src="https://img.icons8.com/arcade/64/activity-grid-2.png" alt="activity-grid-2"/></h2>
+<h2 class="text-center py-3">Apki <img width="34" height="34" src="https://img.icons8.com/arcade/64/activity-grid-2.png" alt="activity-grid-2"/></h2>
 
 <section class="app-boxy">
 <div class="container text-center text-light py-4">
-<div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 ">
+<div class="row row-cols-3 row-cols-lg-5 g-2 g-lg-3 justify-content-center">
 
-<div class="col-4 py-3">
-<a class="btn app-img glass-box p-2" onclick="location.href='../notatnik/note.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/64/task.png" alt="task"/><p class="text-center text-light">Notatnik</p></a>
-</div>
-<div class="col-4 py-3">
-<a class="btn app-img glass-box p-2" onclick="location.href='../dysk/dysk.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/64/cloud-storage.png" alt="cloud-storage"/><p class="text-center text-light">Dysk</p></a>
-</div>
-<div class="col-4 py-3">
-<a class="btn app-img glass-box p-2" onclick="location.href='../galeria/galeria.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/50/gallery.png" alt="gallery"/><p class="text-center text-light">Galeria</p></a>
-</div>
-<div class="col-4 py-3">
-<a class="button btn app-img glass-box p-2" onclick="location.href='../todo/todo_index.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/64/test-passed.png" alt="test-passed"/><p class="text-center text-light">ToDo</p></a>
-</div>
-<div class="col-4 py-3">
-<a class="button btn app-img glass-box p-2" onclick="location.href='../tabele/tabele.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/64/activity-grid.png" alt="activity-grid"/><p class="text-center text-light">Tabele</p></a>
-</div>
-<div class="col-4 py-3">
-<a class="button btn app-img glass-box p-2" onclick="location.href='../terminal_mobile/terminal.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/64/console.png" alt="console"/><p class="text-center text-light">Terminal</p></a>
-</div>
-<div class="col-4 py-3">
-<a class="btn app-img glass-box p-2" onclick="location.href='../kalendarz/kalendarz.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/64/calendar.png" alt="calendar"/><p class="text-center text-light">Kalendarz</p></a>
-</div>
-
-
-<div class="col-4 py-3">
-<button id="tablica-btn" onclick="location.href='../tablica/read_all.php'" class="button btn app-img glass-box p-2" type="button">
-<img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/50/flipboard.png" alt="flipboard"/>
-<?php if ($unread_tablica > 0): ?>
-  <span class="badge rounded-pill bg-danger"><?= $unread_tablica ?></span>
+<?php if (empty($visibleCards)): ?>
+  <div class="col-12 py-3">
+    <div class="alert alert-warning">Brak przypisanych aplikacji. Skontaktuj się z administratorem.</div>
+  </div>
 <?php endif; ?>
-<p class="text-center text-light">Tablica</p>
-</button>
-</div>
 
-<div class="col-4 py-3">
-<a class="button btn app-img glass-box p-2" onclick="location.href='../portfel_mobile/portfel.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/64/card-wallet.png" alt="card-wallet"/><p class="text-center text-light">Portfel</p></a>
-</div>
-
-
-<div class="col-4 py-3">
-<a class="button btn app-img glass-box p-2" onclick="location.href='../paint/paint_mobile.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/50/sign-up.png" alt="sign-up"/><p class="text-center text-light">Rysunki</p></a>
-</div>
-
-<div class="col-4 py-3">
-<a class="button btn app-img glass-box p-2" onclick="location.href='../nauka/nauka_ang.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/50/translation.png" alt="translation"/><p class="text-center text-light">Nauka</p></a>
-</div>
-
-<div class="col-4 py-3">
-<a class="button btn app-img glass-box p-2" onclick="location.href='../lista_uzytkownikow.php'"><img width="50" height="50" class="iko" src="https://img.icons8.com/arcade/50/contacts--v2.png" alt="contacts--v2"/><p class="text-center text-light">Kontakty</p></a>
-</div>
-
+<?php foreach ($visibleCards as $card): ?>
+  <div class="col py-3">
+    <button
+      id="<?php echo $card['key'] === 'tablica' ? 'tablica-btn' : ''; ?>"
+      class="button btn app-img glass-box p-2"
+      data-app-card
+      onclick="location.href='<?php echo htmlspecialchars($card['path'], ENT_QUOTES, 'UTF-8'); ?>'"
+      type="button">
+      <img width="50" height="50" class="iko" src="<?php echo htmlspecialchars($card['icon'], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($card['label'], ENT_QUOTES, 'UTF-8'); ?>"/>
+      <?php if ($card['key'] === 'tablica' && $unreadTablica > 0): ?>
+        <span class="badge rounded-pill bg-danger"><?php echo $unreadTablica; ?></span>
+      <?php endif; ?>
+      <p class="text-center text-light"><?php echo htmlspecialchars($card['label'], ENT_QUOTES, 'UTF-8'); ?></p>
+    </button>
+  </div>
+<?php endforeach; ?>
 
 </div>
 </div>
@@ -98,22 +89,25 @@ $unread_tablica = json_decode(@file_get_contents("../tablica/unread_count.php"),
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
+<?php if (in_array('tablica', $allowedApps, true)): ?>
 <script>
 function updateUnreadTablica() {
   fetch('../tablica/unread_count.php')
-    .then(res => res.json())
-    .then(data => {
-      const btn = document.getElementById('tablica-btn');
-      let badge = btn.querySelector('span.badge');
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      var btn = document.getElementById('tablica-btn');
+      if (!btn) {
+        return;
+      }
+
+      var badge = btn.querySelector('span.badge');
       if (data.count > 0) {
         if (!badge) {
           badge = document.createElement('span');
           badge.className = 'badge rounded-pill bg-danger';
-          badge.textContent = data.count;
           btn.appendChild(badge);
-        } else {
-          badge.textContent = data.count;
         }
+        badge.textContent = String(data.count);
       } else if (badge) {
         badge.remove();
       }
@@ -122,6 +116,36 @@ function updateUnreadTablica() {
 
 setInterval(updateUnreadTablica, 5000);
 updateUnreadTablica();
+</script>
+<?php endif; ?>
+
+<script>
+document.addEventListener('keydown', function (event) {
+  var cards = Array.from(document.querySelectorAll('[data-app-card]'));
+  if (cards.length === 0 || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter', ' '].includes(event.key)) {
+    return;
+  }
+
+  var index = cards.indexOf(document.activeElement);
+  if (index === -1) {
+    if (event.key.startsWith('Arrow')) {
+      event.preventDefault();
+      cards[0].focus();
+    }
+    return;
+  }
+
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    cards[index].click();
+    return;
+  }
+
+  event.preventDefault();
+  var columns = window.matchMedia('(min-width: 992px)').matches ? 5 : 3;
+  var step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowDown' ? columns : -columns;
+  cards[(index + step + cards.length) % cards.length].focus();
+});
 </script>
 
 </body>

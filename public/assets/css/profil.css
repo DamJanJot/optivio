@@ -4,7 +4,7 @@ background-image: linear-gradient(to bottom, #a1c4fd 0%, #c2e9fb 100%);
       font-family: 'Montserrat', sans-serif;
       margin: 0;
       padding: 1rem;
-height: 100vh;
+min-height: 100vh;
     }
 
 
@@ -79,3 +79,44 @@ height: 100vh;
     .btn-logout{
         margin-top: 1rem;
     }
+
+.contacts-list {
+  display: grid;
+  gap: .65rem;
+}
+
+.contact-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: .7rem;
+}
+
+.contact-card summary {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.contact-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.contact-card img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.contact-card small {
+  margin-left: auto;
+  color: #7dd3fc;
+}
+
+.contact-body {
+  padding: .75rem 0 0 3rem;
+  color: #e5e7eb;
+}

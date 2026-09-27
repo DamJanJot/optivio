@@ -43,6 +43,23 @@ DB_PASS=...
 4. Verify that `.env` is in the project root (same level as `index.php` and `core/`).
 5. If login still fails, print env values temporarily (without password) to confirm loading.
 
+## Integracja logowania + role + dostęp aplikacji (CBA)
+
+Repo ma teraz zintegrowany mechanizm RBAC inspirowany wersją z projektu `dj`:
+
+- logowanie przez `public/login.php`
+- panel użytkownika po loginie: `views/nav.php`
+- panel admina: `public/admin/index.php`
+- przypisania aplikacji do roli i do konkretnego użytkownika
+
+### Kroki wdrożenia
+
+1. Zaimportuj SQL `database/add_access_control_tables.sql`.
+2. Zaloguj się kontem z rolą `admin` lub `owner`.
+3. Wejdź do panelu admina i przypisz aplikacje do ról/użytkowników.
+
+Jeśli użytkownik nie ma przypisanego modułu, moduł nie będzie widoczny w nawigacji i wejście bezpośrednie zwróci komunikat "Brak dostępu".
+
 ## Project Structure
 
 ```

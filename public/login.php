@@ -1,59 +1,41 @@
 <?php
-session_start();
-require_once __DIR__ . '/../core/env_loader.php'; 
+require_once __DIR__ . '/../core/access_control.php';
 
-$host = getenv('DB_HOST');
-$dbname = getenv('DB_NAME');
-$username = getenv('DB_USER');
-$password = getenv('DB_PASS');
+optivio_start_session();
 
-if (!$host || !$dbname || !$username) {
-    die('Brak konfiguracji DB w zmiennych środowiskowych (DB_HOST, DB_NAME, DB_USER, DB_PASS).');
-}
+$errorMessage = '';
 
-$conn = new mysqli($host, $username, $password, $dbname);
-$conn->set_charset("utf8");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim((string) ($_POST['email'] ?? ''));
+    $haslo = (string) ($_POST['haslo'] ?? '');
 
-if ($conn->connect_error) {
-    die("Połączenie nieudane: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $haslo = $_POST['haslo'];
-
-    $sql = "SELECT id, imie, nazwisko, haslo, rola FROM uzytkownicy WHERE email=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        if (password_verify($haslo, $row['haslo'])) {
-            $_SESSION['loggedin'] = true;
-            $_SESSION['id'] = $row['id'];
-            $_SESSION['imie'] = $row['imie'];
-            $_SESSION['nazwisko'] = $row['nazwisko'];
-            $_SESSION['rola'] = $row['rola'];
-
-            if ($row['rola'] === 'admin') {
-                header("Location: pulpit_admin.php?id=" . $row['id']);
-            } else {
-                header("Location: ../views/nav.php?id=" . $row['id']);
-            }
-            exit();
-        } else {
-            echo "<br><br><p class='glass-info container text-center fixed-top py-3' style='color:red;'>Błędne hasło</p>";
-        }
+    if ($email === '' || $haslo === '') {
+        $errorMessage = 'Uzupełnij email i hasło.';
     } else {
-        echo "<br><br><p class='glass-info container text-center fixed-top py-3' style='color:red;'>Nie znaleziono użytkownika z tym adresem email</p>";
+        $stmt = $pdo->prepare('SELECT id, imie, nazwisko, email, haslo, rola FROM uzytkownicy WHERE email = ? LIMIT 1');
+        $stmt->execute([$email]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row && password_verify($haslo, (string) ($row['haslo'] ?? ''))) {
+            $_SESSION['loggedin'] = true;
+            $_SESSION['id'] = (int) $row['id'];
+            $_SESSION['imie'] = (string) ($row['imie'] ?? '');
+            $_SESSION['nazwisko'] = (string) ($row['nazwisko'] ?? '');
+            $_SESSION['email'] = (string) ($row['email'] ?? '');
+            $_SESSION['rola'] = optivio_normalize_role((string) ($row['rola'] ?? 'user'));
+            optivio_refresh_access_cache();
+            optivio_touch_activity();
+
+            if (in_array($_SESSION['rola'], ['admin', 'owner'], true) && optivio_has_app_access('admin_panel')) {
+                optivio_redirect('public/admin/index.php');
+            }
+
+            optivio_redirect('views/nav.php');
+        } else {
+            $errorMessage = 'Nieprawidłowy email lub hasło.';
+        }
     }
-
-    $stmt->close();
 }
-
-$conn->close();
 ?>
 
 
@@ -167,7 +149,11 @@ $conn->close();
                
             </div>
 
-	<div class="headzdj"> </div>
+    <div class="headzdj"> </div>
+
+<?php if ($errorMessage !== ''): ?>
+<p class="glass-info container text-center fixed-top py-3" style="color:red;"><?php echo htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?></p>
+<?php endif; ?>
 
 
 </section>
@@ -180,4 +166,4 @@ $conn->close();
 
    
 </body>
-</html>    	
+</html>

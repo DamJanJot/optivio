@@ -1,69 +1,84 @@
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: #1e1e2f;
-      color: #fff;
-      padding: 1rem;
-    }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #1e1e2f;
+  color: #fff;
+  margin: 0;
+  padding: 28px 16px 96px;
+}
 
-    .task {
-      background: rgba(255,255,255,0.05);
-      padding: 1rem;
-      border-radius: 16px;
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255,255,255,0.1);
+body > h4,
+body > h6,
+#taskForm,
+.task-container,
+body > .btn-task {
+  width: min(900px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+}
 
-    }
-    
-    .task:hover {
-        background-color: rgba(255,255,255,0.08);
+body > h4 {
+  color: #66ccff;
+  font-size: 30px;
+}
 
-    }
-    
-    .form-wrapper {
-      display: none;
-      margin-bottom: 1rem;
-    }
-    .btn-task {
-      margin-bottom: 1rem;
-      background-color: rgba(255,255,255,0.05);
-      border: 2px dashed rgba(255,255,255,0.2);
-      border-radius: 16px;
-      padding: 1rem;
-      text-align: center;
-      color: #aaa;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
+.task {
+  background: rgba(255,255,255,0.06);
+  padding: 1rem;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 14px 36px rgba(0,0,0,.2);
+}
 
-    .btn-task:hover {
-        background-color: rgba(255,255,255,0.08);
+.task:hover {
+  background-color: rgba(255,255,255,0.085);
+  border-color: rgba(13,202,240,.45);
+}
 
-    }
-    
-    textarea {
-      resize: none;
-       background: transparent;
-      border: none;
-    }
+.form-wrapper {
+  display: none;
+  margin-bottom: 1rem;
+}
 
+.btn-task {
+  display: block;
+  margin-bottom: 1rem;
+  background-color: rgba(255,255,255,0.06);
+  border: 1px dashed rgba(255,255,255,0.24);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color .2s;
+}
 
-  .small-info { 
-    font-size: 0.8rem; 
-    color: #aaa; 
-    margin-top: 0.5rem; 
-    
-   }
+.btn-task:hover {
+  background-color: rgba(255,255,255,0.1);
+  border-color: #0dcaf0;
+}
 
+textarea {
+  resize: none;
+}
+
+.small-info {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 0.5rem;
+}
 
 .task-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .task-title {
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 1.25;
 }
 
 .task-buttons {
@@ -72,35 +87,33 @@
 }
 
 .task-buttons button {
-  padding: 4px 6px;
+  padding: 4px 7px;
   font-size: 0.8rem;
   margin-bottom: 0.7rem;
 }
 
 .task-info-box {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  line-height: 1.3;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 0.65rem;
+  margin-top: 0.65rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
 }
 
 .task-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
 
-.task {
-  max-width: 424px;
-  flex: 1 1 calc(50% - 1rem);
+.progress {
+  background: rgba(255,255,255,.08);
 }
 
 @media (max-width: 900px) {
-  .task {
-    max-width: 100%;
-    flex: 1 1 100%;
+  .task-container {
+    grid-template-columns: 1fr;
   }
 }
-

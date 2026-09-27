@@ -1,5 +1,8 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../core/access_control.php';
+optivio_require_login();
+optivio_require_app_access('taski');
+
 require 'db.php';
 
 $user_id = $_SESSION['id'];

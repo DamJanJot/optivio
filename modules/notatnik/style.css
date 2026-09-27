@@ -1,54 +1,143 @@
-    body {
-      font-family: 'Montserrat', sans-serif;
-      /* background: linear-gradient(135deg, #1f1c2c, #928dab); */
-      background: #1e1e2f;
-      color: #fff;
-      padding: 1rem;
-    }
-    .note-card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255,255,255,0.1);
-      position: relative;
-    }
-    .note-card textarea {
-      background: transparent;
-      border: none;
-      color: white;
-      width: 100%;
-      resize: none;
-      font-size: 0.95rem;
-    }
-    .note-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 0.5rem;
-    }
-    .btn {
-      border-radius: 12px;
-    }
-    .add-note {
-      background-color: rgba(255,255,255,0.05);
-      border: 2px dashed rgba(255,255,255,0.2);
-      border-radius: 16px;
-      padding: 1rem;
-      text-align: center;
-      color: #aaa;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    
-    
-    .add-note:hover {
-      background-color: rgba(255,255,255,0.08);
-      box-shadow: 0px 0px 2px #5c90ff, 0px 0px 3px #5c7aff, 0px 0px 5px #136cb5;
-      color: #5cfaff;
-    }
-    
-    
-    
-    /* .add-note i:hover {
-         
-    } */
+* { box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 18px 16px 90px;
+  background: #1e1e2f;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.notes-header {
+  width: min(860px, 100%);
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.notes-header h1 {
+  margin: 0;
+  font-size: 24px;
+  text-align: center;
+}
+
+.back-link {
+  color: #aaa;
+  text-decoration: none;
+}
+
+.add-note {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 10px;
+  background: rgba(255,255,255,.07);
+  color: white;
+  cursor: pointer;
+}
+
+#notes-container {
+  width: min(860px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.note-card {
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,.055);
+}
+
+.note-card.is-pinned {
+  border-color: rgba(56,189,248,.75);
+  box-shadow: inset 3px 0 #38bdf8;
+}
+
+.note-card textarea {
+  width: 100%;
+  resize: vertical;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  font: inherit;
+}
+
+.note-card textarea:not([readonly]) {
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.18);
+  outline: 1px solid #38bdf8;
+}
+
+.note-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.note-footer time {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.note-actions {
+  display: flex;
+  gap: 7px;
+}
+
+.note-actions button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9px;
+  background: rgba(255,255,255,.07);
+  color: white;
+  cursor: pointer;
+}
+
+.note-actions .pin-note.active {
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+
+.note-actions .delete-note {
+  color: #fb7185;
+}
+
+.empty-notes {
+  padding: 24px;
+  border: 1px dashed rgba(255,255,255,.2);
+  border-radius: 14px;
+  color: #aaa;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .notes-header {
+    grid-template-columns: 1fr auto;
+  }
+  .notes-header h1 {
+    display: none;
+  }
+  .add-note span {
+    display: none;
+  }
+  .note-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .note-actions {
+    align-self: flex-end;
+  }
+}

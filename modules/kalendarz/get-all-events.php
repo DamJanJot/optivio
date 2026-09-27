@@ -1,6 +1,11 @@
-<?php require_once __DIR__ . '/../../core/env_loader.php'; 
-$month = $_GET['month']; $year = $_GET['year'];
+<?php
+require_once __DIR__ . '/db.php';
+
+$month = max(1, min(12, (int) ($_GET['month'] ?? date('n'))));
+$year = (int) ($_GET['year'] ?? date('Y'));
 $stmt = $pdo->prepare("SELECT data, kolor FROM wydarzenia WHERE user_id = ? AND MONTH(data) = ? AND YEAR(data) = ?");
-$stmt->execute([$_SESSION['id'], $month, $year]); $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-header('Content-Type: application/json'); echo json_encode($events);
+$stmt->execute([(int) $_SESSION['id'], $month, $year]);
+
+header('Content-Type: application/json; charset=UTF-8');
+echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC), JSON_UNESCAPED_UNICODE);
 ?>

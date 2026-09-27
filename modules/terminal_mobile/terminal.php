@@ -1,9 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: login.php');
-    exit();
-}
+require_once __DIR__ . '/../../core/access_control.php';
+optivio_require_login();
+optivio_require_app_access('terminal');
 ?>
 
 <!doctype html>

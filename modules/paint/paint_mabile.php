@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/../../core/access_control.php';
+optivio_require_login();
+optivio_require_app_access('paint');
+?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
