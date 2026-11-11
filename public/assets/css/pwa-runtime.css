@@ -1,0 +1,198 @@
+.pwa-runtime-ui {
+  --pwa-accent: #5ea8ff;
+  --pwa-surface: rgba(10, 16, 29, .97);
+  --pwa-border: rgba(148, 163, 184, .25);
+  --pwa-text: #f8fafc;
+  --pwa-muted: #b8c2d4;
+  font-family: Inter, Montserrat, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--pwa-text);
+  position: relative;
+  z-index: 2147483646;
+}
+.pwa-runtime-network {
+  position: fixed;
+  inset: max(10px, env(safe-area-inset-top)) 50% auto auto;
+  transform: translateX(50%);
+  width: min(680px, calc(100vw - 24px));
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(251, 191, 36, .32);
+  border-radius: 16px;
+  background: rgba(30, 24, 13, .96);
+  box-shadow: 0 16px 52px rgba(0, 0, 0, .32);
+  backdrop-filter: blur(18px);
+}
+.pwa-runtime-network[hidden],
+.pwa-runtime-toast[hidden],
+.pwa-runtime-blocker[hidden] { display: none !important; }
+.pwa-runtime-network strong,
+.pwa-runtime-network small { display: block; }
+.pwa-runtime-network strong { font-size: 13px; }
+.pwa-runtime-network small { margin-top: 2px; color: #e9d9a8; font-size: 11px; line-height: 1.35; }
+.pwa-runtime-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #fbbf24;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, .12);
+}
+.pwa-runtime-network button,
+.pwa-runtime-primary,
+.pwa-runtime-blocker button {
+  appearance: none;
+  border: 0;
+  border-radius: 12px;
+  background: var(--pwa-accent);
+  color: #06101d;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 10px 14px;
+}
+.pwa-runtime-toast {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: min(520px, calc(100vw - 36px));
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 13px;
+  padding: 14px;
+  border: 1px solid var(--pwa-border);
+  border-radius: 20px;
+  background: var(--pwa-surface);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .46);
+  backdrop-filter: blur(22px);
+}
+.pwa-runtime-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  background: rgba(94, 168, 255, .14);
+  color: var(--pwa-accent);
+  font-size: 20px;
+}
+.pwa-runtime-copy { min-width: 0; }
+.pwa-runtime-copy strong { display: block; font-size: 14px; line-height: 1.25; }
+.pwa-runtime-copy p { margin: 4px 0 0; color: var(--pwa-muted); font-size: 12px; line-height: 1.45; }
+.pwa-runtime-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--pwa-muted);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  padding: 4px;
+}
+.pwa-runtime-blocker {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(2, 6, 14, .86);
+  backdrop-filter: blur(18px);
+}
+.pwa-runtime-blocker-card {
+  width: min(520px, 100%);
+  padding: 34px;
+  border: 1px solid rgba(94, 168, 255, .32);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(18, 29, 50, .99), rgba(7, 13, 25, .99));
+  box-shadow: 0 34px 120px rgba(0, 0, 0, .58);
+  text-align: center;
+}
+.pwa-runtime-blocker-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 21px;
+  background: rgba(94, 168, 255, .14);
+  color: var(--pwa-accent);
+  font-size: 34px;
+}
+.pwa-runtime-eyebrow {
+  margin: 0 0 8px;
+  color: var(--pwa-accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+.pwa-runtime-blocker h2 {
+  margin: 0;
+  color: var(--pwa-text);
+  font-size: clamp(24px, 5vw, 34px);
+  line-height: 1.1;
+}
+.pwa-runtime-blocker-card > p:not(.pwa-runtime-eyebrow) {
+  margin: 16px auto 22px;
+  color: var(--pwa-muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.pwa-runtime-blocker button {
+  width: 100%;
+  min-height: 48px;
+  font-size: 14px;
+}
+.pwa-runtime-blocker button:disabled { cursor: wait; opacity: .72; }
+.pwa-runtime-blocker small {
+  display: block;
+  margin-top: 14px;
+  color: #8d9ab0;
+  font-size: 11px;
+  line-height: 1.45;
+}
+html[data-pwa-update-required="true"] body > *:not(.pwa-runtime-ui) {
+  pointer-events: none !important;
+}
+@media (max-width: 640px) {
+  .pwa-runtime-network {
+    grid-template-columns: auto 1fr;
+  }
+  .pwa-runtime-network button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .pwa-runtime-toast {
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .pwa-runtime-primary {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .pwa-runtime-close {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .pwa-runtime-blocker-card { padding: 26px 22px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pwa-runtime-toast,
+  .pwa-runtime-network { animation: pwa-runtime-enter .28s ease-out; }
+  @keyframes pwa-runtime-enter {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .pwa-runtime-network {
+    animation-name: pwa-runtime-network-enter;
+  }
+  @keyframes pwa-runtime-network-enter {
+    from { opacity: 0; transform: translate(50%, -10px); }
+    to { opacity: 1; transform: translate(50%, 0); }
+  }
+}

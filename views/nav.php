@@ -58,9 +58,13 @@ $avatar = optivio_stored_file_url((string) ($stmt->fetchColumn() ?: ''));
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel aplikacji</title>
+  <meta name="theme-color" content="#0b1220">
+  <link rel="manifest" href="../public/manifest.json">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/ef9d577567.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="../public/assets/css/portfolio_app.css" />
+  <link rel="stylesheet" href="../public/assets/css/pwa-runtime.css?v=<?= rawurlencode(PWA_APP_VERSION) ?>">
+  <script src="../public/assets/js/pwa-runtime.js?v=<?= rawurlencode(PWA_APP_VERSION) ?>" data-pwa-runtime data-app-id="optivio" data-app-name="Optivio" data-app-version="<?= htmlspecialchars(PWA_APP_VERSION, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" data-status-url="../public/pwa-status.php" data-worker-url="../service-worker.js" data-worker-scope="../"></script>
   <link rel="website icon" type="png" href="../public/assets/img/logo.png">
   <meta name="description" content="Panel aplikacji użytkownika">
 </head>

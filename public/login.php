@@ -4,6 +4,7 @@ require_once __DIR__ . '/../core/access_control.php';
 optivio_start_session();
 
 $errorMessage = '';
+$installRequest = (string) ($_GET['install'] ?? $_POST['install'] ?? '') === '1';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim((string) ($_POST['email'] ?? ''));
@@ -25,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['rola'] = optivio_normalize_role((string) ($row['rola'] ?? 'user'));
             optivio_refresh_access_cache();
             optivio_touch_activity();
+
+            if ($installRequest) {
+                optivio_redirect('views/nav.php?install=1');
+            }
 
             if (in_array($_SESSION['rola'], ['admin', 'owner'], true) && optivio_has_app_access('admin_panel')) {
                 optivio_redirect('public/admin/index.php');
@@ -54,6 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="./assets/css/loginstyle.css">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0b1220">
+    <link rel="stylesheet" href="./assets/css/pwa-runtime.css?v=<?= rawurlencode(PWA_APP_VERSION) ?>">
+    <script src="./assets/js/pwa-runtime.js?v=<?= rawurlencode(PWA_APP_VERSION) ?>" data-pwa-runtime data-app-id="optivio" data-app-name="Optivio" data-app-version="<?= htmlspecialchars(PWA_APP_VERSION, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" data-status-url="pwa-status.php" data-worker-url="../service-worker.js" data-worker-scope="../"></script>
 
     <script src="https://kit.fontawesome.com/ef9d577567.js" crossorigin="anonymous"></script>
 
@@ -102,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="col-md-4 offset-md-4">
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <?php if ($installRequest): ?><input type="hidden" name="install" value="1"><?php endif; ?>
             <div class="mb-3">
                 <h4 class="text-center text-light pb-2 mb-0"><label class="form-label text-light">Email lub nick:</label></h4>
                 <input type="text" placeholder="Email lub nick" name="email" class="form-control" required>
