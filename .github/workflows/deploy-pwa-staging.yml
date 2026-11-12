@@ -1,0 +1,129 @@
+name: Deploy Optivio PWA to code-d.j.pl test
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type STAGING to upload only the Optivio PWA change set.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: optivio-code-d-j-pl-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: inputs.confirm == 'STAGING'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: staging-code-d-j-pl
+      url: https://code-d.j.pl/optivio-app/public/login.php
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Validate the exact PWA change set
+        run: |
+          set -euo pipefail
+          php tests/pwa_contract.php
+          php -l core/db.php
+          php -l core/pwa_runtime.php
+          php -l public/login.php
+          php -l public/pwa-status.php
+          php -l views/nav.php
+          node --check service-worker.js
+          node --check public/service-worker.js
+          node --check public/assets/js/pwa-runtime.js
+          python3 -m json.tool public/manifest.json >/dev/null
+
+      - name: Upload only Optivio PWA files over FTPS and verify hashes
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PORT: ${{ secrets.FTP_PORT }}
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import io
+          import ipaddress
+          import os
+          import ssl
+          from ftplib import FTP_TLS
+          from pathlib import Path
+
+          required = ['FTP_SERVER', 'FTP_USERNAME', 'FTP_PASSWORD', 'FTP_PORT']
+          missing = [name for name in required if not os.environ.get(name)]
+          if missing:
+              raise SystemExit('Missing staging-code-d-j-pl secrets: ' + ', '.join(missing))
+          if not os.environ['FTP_USERNAME'].lower().endswith('@code-d.j.pl'):
+              raise SystemExit('Expected a domain-scoped @code-d.j.pl FTP account.')
+          if not os.environ['FTP_PORT'].isdigit() or not 1 <= int(os.environ['FTP_PORT']) <= 65535:
+              raise SystemExit('Invalid FTP port.')
+          try:
+              ipaddress.ip_address(os.environ['FTP_SERVER'])
+          except ValueError:
+              pass
+          else:
+              raise SystemExit('Use the FTPS certificate hostname, not an IP address.')
+
+          files = [
+              'core/pwa_runtime.php',
+              'offline.html',
+              'public/assets/css/pwa-runtime.css',
+              'public/assets/js/pwa-runtime.js',
+              'public/icons/icon-192.png',
+              'public/icons/icon-512.png',
+              'public/pwa-status.php',
+              'service-worker.js',
+              'public/service-worker.js',
+              'public/manifest.json',
+              'core/db.php',
+              'public/login.php',
+              'views/nav.php',
+          ]
+          for relative in files:
+              if not Path(relative).is_file():
+                  raise SystemExit('Missing release file: ' + relative)
+
+          ftp = FTP_TLS(context=ssl.create_default_context(), timeout=30)
+          try:
+              ftp.connect(os.environ['FTP_SERVER'], int(os.environ['FTP_PORT']))
+              ftp.login(os.environ['FTP_USERNAME'], os.environ['FTP_PASSWORD'])
+              ftp.prot_p()
+              ftp.cwd('/optivio-app/')
+              ftp.sendcmd('TYPE I')
+              if not ftp.size('public/login.php'):
+                  raise RuntimeError('The existing Optivio test installation was not found.')
+              for relative in files:
+                  with Path(relative).open('rb') as handle:
+                      ftp.storbinary('STOR ' + relative, handle)
+                  print('uploaded', relative)
+              for relative in files:
+                  remote = io.BytesIO()
+                  ftp.retrbinary('RETR ' + relative, remote.write)
+                  expected = hashlib.sha256(Path(relative).read_bytes()).hexdigest()
+                  actual = hashlib.sha256(remote.getvalue()).hexdigest()
+                  if actual != expected:
+                      raise SystemExit('Hash mismatch: ' + relative)
+                  print('verified', relative, actual)
+          finally:
+              try:
+                  ftp.quit()
+              except Exception:
+                  ftp.close()
+          PY
+
+      - name: Verify the public test version
+        run: |
+          set -euo pipefail
+          curl -fsS 'https://code-d.j.pl/optivio-app/public/pwa-status.php' \
+            | python3 -c 'import json,sys; s=json.load(sys.stdin); assert s["appId"] == "optivio" and s["version"] == "2026.11.11.1"'
+          status="$(curl -sS -o /dev/null -w '%{http_code}' 'https://code-d.j.pl/optivio-app/public/login.php')"
+          test "$status" = 200
